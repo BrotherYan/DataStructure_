@@ -196,6 +196,8 @@ public:
     friend bool listDelteDuplicate(SqlList<T> &L);
     template <typename T>
     friend bool listMerge(SqlList<T> L1, SqlList<T> L2, SqlList<T> &L_merge);
+    template <typename T>
+    friend bool findX(SqlList<T> &L, T value);
 };
 
 template<typename ElemType>
@@ -209,6 +211,68 @@ void SqlList<ElemType>::listTraverse(void (*visit)(ElemType &L))
 
 
 /**************** EXCERCISES ******************/
+template<typename ElemType>
+bool findX(SqlList<ElemType> &L, ElemType value)
+{
+    if (value < L.List[0])
+    {
+        L.listInsert(1, value);
+        return true;
+    }
+    if (value > L.List[L.length - 1])
+    {
+        L.listInsert(L.length+1, value);
+        return true;
+    }
+    int pos = 0;
+    int right = 0;
+    int left = L.length - 1;
+    int mid = 0;
+    while (right != left)
+    {
+        mid = (right + left) / 2;
+        if (value < L.List[mid]) left = mid + 1;
+        if (value > L.List[mid]) right = mid - 1;
+        if (value == L.List[mid])
+        {
+            pos = mid;
+            break;
+        }
+    }
+    
+    if (right == left)
+    {
+        L.listInsert(right, value);
+        return false;
+    }
+    
+    ElemType temp = L.List[pos];
+    L.List[pos] = L.List[pos+1];
+    L.List[pos+1] = temp;
+    return true;
+};
+
+/********************/
+typedef int dataType;
+void reverse2Arrays(dataType A[], int left, int right, int arraySize)
+{   // 逆转
+    if (left >= right || right >= arraySize) return;
+    int mid = (right+left) / 2;
+    for (int i=0; i<mid - left; i++)
+    {
+        dataType temp = A[left+i];
+        A[left+i] = A[right-i];
+        A[right-i] = temp;
+    }
+}
+void exchange2Arrays(dataType A[], int m, int n, int arraySize)
+{   // 逆转 A[0...right-1] -> A[left...left+right-1] 同时, A[right...left-1] -> A[0...left-1]
+    reverse2Arrays(A, 0, m+n-1, arraySize);
+    reverse2Arrays(A, 0, n-1, arraySize);
+    reverse2Arrays(A, n, m+n-1, arraySize);
+}
+/********************/
+
 template <typename ElemType>
 bool listMerge(SqlList<ElemType> L1, SqlList<ElemType> L2, SqlList<ElemType> &L_merge)
 {   // 合并两个 “有序表”

@@ -19,6 +19,8 @@ int main(int argc, const char * argv[]) {
     std::cout<<"delete operation:"<<std::endl;
     a.listTraverse(visit);
     
+    findX(a, 0);
+    a.listTraverse(visit);
     std::cout<<"find a element "<<a.locateElem(2, EQ) << std::endl;
     
     std::cout<<"deleteRangeX "<<std::endl;
