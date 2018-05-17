@@ -211,6 +211,104 @@ void SqlList<ElemType>::listTraverse(void (*visit)(ElemType &L))
 
 
 /**************** EXCERCISES ******************/
+
+/********************************/
+// 一个整数序列 A 有n个元素, 所有元素a满足， 0<= a < n；
+//  其中元素有 a(p1) = a(p2) = ... = a(pm)， 若m > n/2，则 a(p1) 为主元素
+//  算法思想：
+//  1.若m>n/2， 则m的个数至少占序列的一半，故可用一元计数器对 count 候选数计数，若一元计数器 count < 0，
+//  则一定无主元素，若一元计数器 count>0， 则可能存在主元素。
+//  2.判断 candidate 是否能成为主元素
+int mojarity_Search(int a[], int n)
+{   //
+    int i, candidate, count;
+    candidate = a[0];
+    for (i=1; i<n; i++)
+    {
+        if (a[i] == candidate) count++;
+        else
+            if (count > 0) count--;
+            else
+            {
+                candidate = a[i];
+                count = 1;
+            }
+    }
+    if(count > 0)
+        for (count=0,i = 0; i<n; i++)
+            if (a[i] == candidate) count++;
+    if (count > n/2) return candidate;
+    return -1;
+}
+/********************************/
+
+/********************************/
+//  描述：两个升序且数量相等的整型数组 A,B，中位数分别为a,b ，现在要求出含两个数组的所有元素的中位数 c。
+//  算法思想：
+//  1. if a=b, 则 c 是 a 或 b 中的一个。
+//  2. if a>b, 则舍去 A 的大于中位数部分，保留小于中位数部分；同时舍去 B 的小于中位数部分，保留大于中位数部分
+//  3. if a<b, 舍去 A 的小于中位数部分，保留大于中位数部分；同时舍去 B 的大于中位数部分，保留小于中位数部分；
+//  4. 重复1-3，直到两个序列中均只有1个元素为止，较小者为中位数。
+
+int median_Search(int A[], int B[], int n)
+{
+    int s1=0, d1=n-1, m1, s2=0, d2=n-1, m2;
+    while (m1 != d1 || m2 != d2)
+    {   m1 = (s1+d1) / 2;
+        m2 = (s2+d2) / 2;
+        if (A[m1] == B[m2]) return A[m1]; // 满足 step1
+        if (A[m1] > B[m2])
+        {   // 舍去 A 的大于中位数部分，保留小于中位数部分；同时舍去 B 的小于中位数部分，保留大于中位数部分
+            if ((s1 + d1)%2 == 0)
+            {   // 若元素个数为奇数，保留中间点。
+                d1 = m1;
+                s2 = m2;
+            }
+            else
+            {   // 若元素个数为偶数，保留中间点。
+                d1 = m1-1;
+                d2 = m2+1;
+            }
+        }
+        else
+        {   // a<b, 舍去 A 的小于中位数部分，保留大于中位数部分；同时舍去 B 的大于中位数部分，保留小于中位数部分；
+            if ((s1+d1)%2 == 0)
+            {   // 元素个数为奇
+                s1 = m1;
+                d2 = m2;
+            }
+            else
+            {
+                s1 = m1+1;
+                d2 = m2-1;
+            }
+        }
+    }
+    return A[m1] < B[m2] ? A[m1] : B[m2];
+}
+
+// T(f(n)) = O (log n) S = O(1)
+/********************************/
+
+/********************************/
+void reverse_array(int L[], int from, int to)
+{
+    int i, temp;
+    for (i=0; i<(to - from + 1)/2; i++)
+    {
+        temp = L[from+i];
+        L[from+i] = L[to-i];
+        L[to-i] = temp;
+    }
+}
+void shiftP(int L[], int n, int p)
+{
+    reverse_array(L, 0, p-1);  // T = O (n)
+    reverse_array(L, p, n-1);  // T = O (n)
+    reverse_array(L, 0, n-1);  // T = O (n)
+}
+/********************************/
+
 template<typename ElemType>
 bool findX(SqlList<ElemType> &L, ElemType value)
 {
